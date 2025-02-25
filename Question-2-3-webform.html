@@ -43,13 +43,19 @@
 <body>
     <h1>Feedback Form</h1>
     <form id="feedbackForm">
-        <div class="control">
-  <label for="name">Full name (required)</label><input id="name" name="name" type="text" required />
-</div>
+        
 <div class="control">
-  <label for="biography">Biography</label><textarea id="biography" name="biography" aria-describedby="bio-instructions"></textarea>
-  <span id="bio-instructions">Include examples on your skills in JavaScript.</span>
-</div>
+            <label for="name">Full name <span class="required">*</span></label>
+            <input id="name" name="name" type="text" aria-required="true" aria-describedby="name_description">
+            <span id="name_description" class="offscreen">Please enter your full name.</span>
+        </div>
+
+        <div class="control">
+            <label for="biography">Biography</label>
+            <textarea id="biography" name="biography" aria-describedby="biography_description"></textarea>
+            <span id="biography_description" class="offscreen">Include examples of your skills in JavaScript.</span>
+        </div>
+
 
         <fieldset>
   <legend>Gender</legend>
@@ -62,9 +68,10 @@
 </fieldset>
 
         <div class="control">
-  <input id="accept_agbs" name="accept_agbs" type="checkbox" value="1" aria-describedby="agbs-instructions" /><label for="accept_agbs">I accept the terms and conditions</label>
-  <span id="agbs-instructions" class="sr-only">Required to submit the form</span>
-</div>
+            <input id="accept_agbs" name="accept_agbs" type="checkbox" value="1" aria-required="true">
+            <label for="accept_agbs">I accept the terms and conditions <span class="required">*</span></label>
+            <span class="error" id="accept_agbs_error" aria-live="assertive"></span>
+        </div>
 
         <div class="control">
             <input name="validate" type="hidden" value="1">
