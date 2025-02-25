@@ -47,15 +47,18 @@
         </div>
 
 
-        <fieldset>
-  <legend>Gender</legend>
-  <div class="control">
-    <input id="gender_male" name="gender" type="radio" value="male" /><label for="gender_male">Male</label>
-  </div>
-  <div class="control">
-    <input id="gender_female" name="gender" type="radio" value="female" /><label for="gender_female">Female</label>
-  </div>
-</fieldset>
+       <fieldset>
+            <legend>Gender <span class="required">*</span></legend>
+            <div class="control">
+                <input id="gender_male" name="gender" type="radio" value="male" aria-required="true">
+                <label for="gender_male">Male</label>
+            </div>
+            <div class="control">
+                <input id="gender_female" name="gender" type="radio" value="female">
+                <label for="gender_female">Female</label>
+            </div>
+            <span class="error" id="gender_error" aria-live="assertive"></span>
+        </fieldset>
 
         <div class="control">
             <input id="accept_agbs" name="accept_agbs" type="checkbox" value="1" aria-required="true">
