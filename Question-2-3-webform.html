@@ -73,61 +73,80 @@
 
         <div id="error_container" aria-live="assertive" style="display:none;"></div>
     </form>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script>
         "use strict";
-        $(document).ready(function () {
-            $('#feedbackForm').on('submit', function (event) {
-                event.preventDefault(); // Prevent the default form submission
-                
-                // Clear previous errors
-                $('.error').text('');
-                $('#error_container').hide();
+        (function () {
+            var validateInput;
 
-                let hasErrors = false;
+            $.urlParam = function (name) {
+                var results;
+                results = new RegExp('[?&]' + name + '=([^&#]*)').exec(window.location.href);
 
-                // Validation logic
-                const name = $('#name').val().trim();
-                if (!name) {
-                    hasErrors = true;
-                    $('#name_description').text('Please enter your name!').show();
-                    $('#name').attr('aria-describedby', 'name_description');
-                }
-
-                const biography = $('#biography').val().trim();
-                if (!biography) {
-                    hasErrors = true;
-                    $('#biography_description').text('Please tell us something about your history!').show();
-                    $('#biography').attr('aria-describedby', 'biography_description');
-                }
-
-                const gender = $('input[name="gender"]:checked').val();
-                if (!gender) {
-                    hasErrors = true;
-                    $('#gender_error').text('Please tell us your gender!').show();
-                    $('#gender_male').attr('aria-describedby', 'gender_error');
-                    $('#gender_female').attr('aria-describedby', 'gender_error');
-                }
-
-                const acceptAgbs = $('#accept_agbs').is(':checked');
-                if (!acceptAgbs) {
-                    hasErrors = true;
-                    $('#accept_agbs_error').text('You must accept our terms and conditions!').show();
-                    $('#accept_agbs').attr('aria-describedby', 'accept_agbs_error');
-                }
-
-                if (hasErrors) {
-                    // Move focus to the first error
-                    $('#error_container').html('<strong>Please correct the errors in the form.</strong>').show();
-                    $('#error_container').focus();
-                    return; // Stop further execution
+                if (results === null) {
+                    return null;
                 } else {
-                    alert('All inputs are valid.');
-                    // Here you can add the form submission logic, e.g., an AJAX call or redirect.
+                    return decodeURI(results[1]) || null;
+                }
+            };
+
+            validateInput = function validateInput(input, message) {
+                var $elementToDescribe, $error, $errorContainer, $fieldset, $input, $referencedElement, value;
+                $input = $('[name="' + input + '"]');
+
+                if ((value = $.urlParam(input)) === null) {
+                    if ($('fieldset.errors').length === 0) {
+                        $('form').prepend('<fieldset class="errors"><legend>Errors</legend><ul></ul></fieldset>');
+                    }
+
+                    $referencedElement = null;
+                    $elementToDescribe = null;
+                    $errorContainer = $('fieldset.errors ul');
+
+                    if ($input.is(':radio')) {
+                        $fieldset = $input.closest('fieldset');
+                        $elementToDescribe = $fieldset;
+                        $referencedElement = $input.filter(':first');
+                    } else {
+                        $elementToDescribe = $input;
+                        $referencedElement = $input;
+                    }
+
+                    $error = $('<a>' + message + '</a>');
+                    $error.click(function (e) {
+                        $referencedElement.focus();
+                        return e.preventDefault();
+                    });
+                    $elementToDescribe.attr('aria-describedby', input + '_description');
+                    $errorContainer.append('<li>').find('li:last').append($error);
+                } else {
+                    if ($input.is(':checkbox')) {
+                        $input.attr('checked', true);
+                    }
+
+                    if ($input.is(':radio')) {
+                        return $input.filter('[value="' + value + '"]').attr('checked', true);
+                    } else {
+                        return $input.val(value);
+                    }
+                }
+            };
+
+            $(document).ready(function () {
+                if ($.urlParam('validate')) {
+                    validateInput('name', 'Please enter your name!');
+                    validateInput('biography', 'Please tell us something about your history!');
+                    validateInput('gender', 'Please tell us your gender!');
+                    validateInput('accept_agbs', 'You must accept our terms and conditions!');
+
+                    if ($('.error').length === 0) {
+                        return alert('All inputs are valid.');
+                    }
                 }
             });
-        });
+        }).call(void 0);
     </script>
+    
 </body>
 </html>
